@@ -1,7 +1,8 @@
 --[[
 * Floos - Overlay font helpers
 *
-* Loads bundled fonts from fush/assets/fonts/ via imgui.AddFontFromFileTTF
+* Loads fonts from assets/fonts/ or the system Fonts folder via
+* imgui.AddFontFromFileTTF
 * (same approach as XIUI). Fonts are prewarmed on load - never added mid-frame.
 ]]--
 
@@ -10,7 +11,7 @@ local imgui = require('imgui');
 
 local M = {};
 
--- Friendly label -> filename under assets/fonts/
+-- Friendly label -> TTF filename, looked up by font_dirs()
 -- "Agave" keeps Ashita's current ImGui font (no PushFont).
 -- "Tahoma Bold (Default)" is the addon default for overlays.
 M.OPTIONS = T{
@@ -31,10 +32,19 @@ local prewarmed = false;
 -- and per-module scale apply via begin_scale (legacy SetWindowFontScale or ImGui 1.92+).
 M.BASE_SIZE = 20;
 
-local function fonts_dir()
+--- Where a TTF may live, in order of preference: a copy bundled under the
+--- addon, then the system font folder. Tahoma, Segoe UI, Consolas and Verdana
+--- are Microsoft fonts and redistributing them is not permitted, so they are
+--- not in the download - on Windows they are already installed, which is where
+--- the second path finds them. See assets/fonts/README.txt.
+local function font_dirs()
     local base = (addon and addon.path) or '';
     base = base:gsub('[/\\]+$', '');
-    return base .. '/assets/fonts/';
+    local windows = (os.getenv('SystemRoot') or 'C:/Windows'):gsub('[/\\]+$', '');
+    return {
+        base .. '/assets/fonts/',
+        windows .. '/Fonts/',
+    };
 end
 
 local function clamp_size(size)
@@ -276,16 +286,22 @@ function M.get_font(label)
         return (cache[label] ~= false) and cache[label] or nil;
     end
 
-    local path = fonts_dir() .. opt.file;
-    local font = try_add_font(path);
+    local font = nil;
+    for _, dir in ipairs(font_dirs()) do
+        font = try_add_font(dir .. opt.file);
+        if font ~= nil then
+            break;
+        end
+    end
     if font == nil then
         cache[label] = false;
         if not warned[label] then
             warned[label] = true;
             print(string.format(
-                '[floos] Could not load font "%s" from %s. Using Default.',
+                '[floos] Could not load font "%s" (%s) from assets/fonts/ or the '
+                    .. 'system Fonts folder. Using Default.',
                 label,
-                path
+                opt.file
             ));
         end
         return nil;
