@@ -1,3 +1,5 @@
+# Floos
+
 A hobby tracker for **HorizonXI**, for Ashita v4.
 
 Floos follows all eight of them — mining, logging, harvesting, excavation,
@@ -7,21 +9,11 @@ each: **is this still worth doing?**
 It reads. It never sends a packet, never acts for you, and never automates
 anything.
 
-## The name
-
-**Floos** — *فلوس* — is Arabic for **money**.
-
-Which is the whole point. Eight hobbies, one question each: *is this still
-worth doing?* Every tab ends in the same number — what an hour of it is
-actually worth. The gathering is the means; the floos is the point.
-
 ---
 
 ## Install
 
-1. Download the repository (**Code -> Download ZIP**) and drop the inner
-   `floos` folder into `Ashita/addons/`, so you end up with
-   `Ashita/addons/floos/floos.lua`.
+1. Drop the `floos` folder into `Ashita/addons/`.
 2. `/addon load floos`
 3. `/floos` to open the settings window.
 
@@ -31,16 +23,6 @@ Add `/addon load floos` to your Ashita boot script to have it load every time.
 `Ashita/config/addons/floos` before loading, and your prices, zone history,
 lifetime gil and per-character sessions all come with you. Skip it and the
 addon starts fresh — nothing breaks, you just re-enter your prices.
-
-### Fonts
-
-Floos can draw in Tahoma, Segoe UI, Consolas or Verdana, but those are
-Microsoft Windows fonts and are not mine to redistribute, so they are not in
-this repository. Copy them from `C:\Windows\Fonts` into
-`floos/assets/fonts/` if you want them - you already have them if you are on
-Windows, and nothing needs installing.
-
-Without them Floos uses Ashita's built-in font and works normally.
 
 ---
 
@@ -78,6 +60,8 @@ Activity
   /floos clam         Bucket weight, value, break odds.
   /floos fatigue      Reset countdown.  (+ reset)
 Setup
+  /floos prices fetch           Pull live prices from psxi.gg.
+  /floos prices token <token>   Save a psxi.gg API token.
   /floos prices import <file>   Merge a name:price file.
   /floos debug        What the addon is actually seeing.  (+ on | off)
 ```
@@ -93,8 +77,27 @@ chunk of iron ore:650
 tropical clam:5100
 ```
 
-Lowercase, no spaces around the colon. The defaults are rough starting values —
-edit them to your server's actual prices or every gil figure will be wrong.
+Lowercase, no spaces around the colon, and the name is the one the **chat log**
+uses — `clump of moko grass`, not `moko grass`. The defaults cover every
+harvesting item on the wiki plus the mining, logging and clamming drops; most
+start at 0.
+
+**Restore Default List** in that same tab replaces your list with the current
+default one — the way to pick up items added to the defaults later without
+resetting the rest of your settings. Prices you already entered for an item on
+that list are carried over.
+
+`/floos prices fetch` fills them in from the [psxi.gg](https://www.psxi.gg)
+market snapshot: the 7-day AH average for a single item, falling back to the
+last sale and then to the bazaar average. Only names already on the list are
+touched — it never adds the other five thousand items — and the game hitches
+for a second while the 2MB snapshot downloads and parses.
+
+That endpoint is keyless until **2026-11-01**, after which it needs a free API
+token (psxi.gg → Settings → Account → API Access). Paste one into **API Token**
+in `/floos` → the price tab, next to the **Fetch Prices Now** button, or set it
+with `/floos prices token psxi_...`, and the fetch keeps working across the
+cutover.
 
 ---
 
@@ -162,6 +165,3 @@ notices.
 The fonts under `assets/fonts/` are Microsoft Windows fonts included for local
 use and are **not** covered by that grant — do not redistribute them publicly
 unless you have the rights to do so.
-
-
-This Addon Was Created and gathered by Claude Opus 5 / Fable

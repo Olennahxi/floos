@@ -1,0 +1,37 @@
+Floos - HELM companion for Ashita v4
+Copyright (C) 2026 the Floos contributors
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+WHY GPL v3
+-----------------------------------------------------------------------
+This is not a choice - it is inherited. Floos's panel rendering, colour
+utilities, bitmap gradient generation, texture manager, window background
+and progress bar code are adapted from XIUI (https://github.com/tirem/XIUI),
+which is licensed GPL v3. Any work derived from it must be released under
+the same terms, with source available.
+
+That means if you publish a modified Floos, you must publish your changes
+under GPL v3 as well.
+
+
+BEFORE YOU PUBLISH
+-----------------------------------------------------------------------
+Replace this file with the full, official GPL v3 text from:
+
+    https://www.gnu.org/licenses/gpl-3.0.txt
+
+The notice above is the standard application notice, not the licence
+itself. A GPL release is expected to ship the complete text.
