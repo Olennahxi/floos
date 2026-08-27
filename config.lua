@@ -980,7 +980,36 @@ local function render_mining()
     if M.settings.psxi_token == nil then
         M.settings.psxi_token = T{ '' };
     end
-    imgui.InputText('API Token', M.settings.psxi_token, 72);
+    -- A saved token reads back masked to its last four characters: enough to
+    -- tell which key is in there, not enough to be worth a screenshot. The
+    -- field stays plain text while you are typing, because a paste you cannot
+    -- read is the reason keys get saved half-truncated. The mask is a fixed
+    -- eight stars, so it does not leak the length either.
+    local token = M.settings.psxi_token[1] or '';
+    if token ~= '' and not M.psxi_token_edit then
+        imgui.Text('API Token');
+        imgui.SameLine();
+        imgui.TextDisabled(#token > 4
+            and (string.rep('*', 8) .. token:sub(-4))
+            or string.rep('*', #token));
+        imgui.SameLine();
+        if imgui.Button('Change##psxi_token') then
+            M.psxi_token_edit = true;
+        end
+    else
+        if imgui.InputText('API Token', M.settings.psxi_token, 72) then
+            -- Keep the field open while it is being typed into, or the first
+            -- character would mask everything after it.
+            M.psxi_token_edit = true;
+        end
+        if token ~= '' then
+            imgui.SameLine();
+            if imgui.Button('Hide##psxi_token') then
+                M.psxi_token_edit = false;
+                settings.save();
+            end
+        end
+    end
     imgui.TextDisabled('Optional today, required from 2026-11-01. Generate one at');
     imgui.TextDisabled('psxi.gg - Settings - Account - API Access.');
     if imgui.Button('Fetch Prices Now') then
