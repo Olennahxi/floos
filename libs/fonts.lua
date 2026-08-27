@@ -247,6 +247,16 @@ local function find_option(label)
 end
 
 local function try_add_font(path)
+    -- AddFontFromFileTTF is native: handed a path that is not there it takes
+    -- the process down with an access violation, and pcall does not catch
+    -- that. Check the file is readable first - every caller comes through
+    -- here, so this is the only place that has to know.
+    local f = io.open(path, 'rb');
+    if f == nil then
+        return nil;
+    end
+    f:close();
+
     -- XIUI uses imgui.AddFontFromFileTTF directly (Ashita binding).
     local size = M.BASE_SIZE;
     local attempts = T{
